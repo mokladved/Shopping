@@ -21,6 +21,7 @@ class ViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureView()
+        configureBackButtonUI()
         configureButtonAction()
     }
     
@@ -51,5 +52,11 @@ extension ViewController: UIConfigurable {
     
     func configureView() {
         view.backgroundColor = .black
+    }
+}
+
+extension ViewController {
+    func configureBackButtonUI() {
+        navigationItem.backButtonTitle = ""
     }
 }
