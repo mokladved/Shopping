@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Constants {
+enum Title {
     static let homeVCImageDescription = "쇼핑하구팡"
     static let navTitle = "영캠러의 쇼핑쇼핑"
 }
