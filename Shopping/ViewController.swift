@@ -21,6 +21,16 @@ class ViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureView()
+        configureButtonAction()
+    }
+    
+    func configureButtonAction() {
+        goButton.addTarget(self, action: #selector(showHome), for: .touchUpInside)
+    }
+    
+    @objc func showHome() {
+        let vc = HomeViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
 
