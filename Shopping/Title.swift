@@ -10,4 +10,5 @@ import Foundation
 enum Title {
     static let homeVCImageDescription = "쇼핑하구팡"
     static let navTitle = "영캠러의 쇼핑쇼핑"
+    static let placeholder = "브랜드, 상품, 프로필, 태그 등"
 }

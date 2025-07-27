@@ -10,7 +10,30 @@ import Alamofire
 import SnapKit
 
 class HomeViewController: UIViewController {
-    let searchBar = UISearchBar()
+    let searchBar = {
+        let bar = UISearchBar()
+        bar.backgroundColor = .black
+        bar.backgroundImage = UIImage()
+        bar.barTintColor = .clear
+        
+        let textField = bar.searchTextField
+        textField.backgroundColor = .myBGDarkGray
+        textField.textColor = .white
+        textField.layer.cornerRadius = 8
+        textField.clipsToBounds = true
+        
+        textField.attributedPlaceholder = NSAttributedString(
+            string: Title.placeholder,
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.myFGLightGray]
+        )
+        
+        if let leftView = textField.leftView as? UIImageView {
+            leftView.tintColor = .myFGLightGray
+        }
+
+        return bar
+    }()
+    
     let stackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -46,6 +69,7 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UIConfigurable {
     func configureHierarchy() {
         view.addSubview(stackView)
+        view.addSubview(searchBar)
         stackView.addArrangedSubview(backImageView)
         stackView.addArrangedSubview(descLabel)
     }
@@ -55,6 +79,10 @@ extension HomeViewController: UIConfigurable {
             make.horizontalEdges.equalToSuperview().inset(40)
             make.centerX.centerY.equalToSuperview()
             make.size.equalTo(300)
+        }
+        searchBar.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
+            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
         
     }
