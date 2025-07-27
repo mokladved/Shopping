@@ -90,6 +90,46 @@ extension HomeViewController: UIConfigurable {
     func configureView() {
         view.backgroundColor = .black
         navigationItem.title = Title.navTitle
+        searchBar.delegate = self
     }
 }
 
+extension HomeViewController: Networkable {
+    typealias Data = String
+    
+    func configure(for data: String) {
+        let requestURL =  URLs.shopping(for: data)
+        guard let url = requestURL.url else {
+            return
+        }
+        let headers = requestURL.headers
+        AF.request(url, method: .get, headers: headers)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: ShopItem.self) { response in
+                switch response.result {
+                case .success(let value):
+                    print(value)
+                case .failure(let error):
+                    print(error)
+            }
+        }
+    }
+}
+
+
+extension HomeViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let input = searchBar.searchTextField.text
+        guard let keyword = isValid(of: input) else {
+            return
+        }
+        configure(for: keyword)
+    }
+    
+    func isValid(of text: String?) -> String? {
+        guard let text = text, !text.trimmingCharacters(in: .whitespaces).isEmpty, text.count >= 2 else {
+            return nil
+        }
+        return text
+    }
+}
