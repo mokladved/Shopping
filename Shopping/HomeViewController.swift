@@ -108,7 +108,10 @@ extension HomeViewController: Networkable {
             .responseDecodable(of: ShopItem.self) { response in
                 switch response.result {
                 case .success(let value):
-                    print(value)
+                    let vc = SearchResultViewController()
+                    vc.shoppingItems = value.items
+                    vc.keyword = data
+                    self.navigationController?.pushViewController(vc, animated: true)
                 case .failure(let error):
                     print(error)
             }
