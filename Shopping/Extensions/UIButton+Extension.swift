@@ -20,4 +20,15 @@ extension UIButton.Configuration {
         return configuration
     }
     
+    static func circleStyle(from name: String) -> UIButton.Configuration {
+        var configuration = UIButton.Configuration.filled()
+        configuration.cornerStyle = .capsule
+        configuration.baseBackgroundColor = .white
+        configuration.baseForegroundColor = .black
+        
+        configuration.image = UIImage(systemName: name)
+        
+        return configuration
+    }
+    
 }
