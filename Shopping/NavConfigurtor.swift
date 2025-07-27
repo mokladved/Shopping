@@ -10,5 +10,8 @@ import UIKit
 enum NavConfigurtor {
     static func configureUI() {
         UINavigationBar.appearance().tintColor = .white
+        UINavigationBar.appearance().titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
     }
 }
