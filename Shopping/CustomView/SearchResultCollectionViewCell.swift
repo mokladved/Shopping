@@ -12,11 +12,6 @@ import SnapKit
 class SearchResultCollectionViewCell: UICollectionViewCell {
     static let identifier = Title.SearchResultCVCIdentifier
     
-    let viewWrappedImageView = {
-        let view = UIView()
-        return view
-    }()
-    
     let favoriteButton = {
         let button = UIButton()
         button.configuration = .circleStyle(from: "heart")
@@ -33,14 +28,12 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     let mallNameLabel = {
         let label = UILabel()
         label.textColor = .white
-        label.text = "상점명"
         return label
     }()
     
     let productNameLabel = {
         let label = UILabel()
         label.textColor = .white
-        label.text = "상품명"
         label.numberOfLines = 2
         return label
     }()
@@ -48,7 +41,6 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     let priceLabel = {
         let label = UILabel()
         label.textColor = .white
-        label.text = "가격"
         return label
     }()
     
@@ -66,9 +58,8 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
 
 extension SearchResultCollectionViewCell: UIConfigurable {
     func configureHierarchy() {
-        contentView.addSubview(viewWrappedImageView)
-        viewWrappedImageView.addSubview(imageView)
-        viewWrappedImageView.addSubview(favoriteButton)
+        contentView.addSubview(imageView)
+        imageView.addSubview(favoriteButton)
         contentView.addSubview(mallNameLabel)
         contentView.addSubview(productNameLabel)
         contentView.addSubview(priceLabel)
@@ -111,7 +102,10 @@ extension SearchResultCollectionViewCell: DataConfigurable {
     typealias Data = Item
     
     func configure(from data: Item) {
-        let imageUrl = URL(string: data.image)
+        guard let imageUrl = URL(string: data.image) else {
+            return
+        }
+        
         imageView.kf.setImage(
             with: imageUrl,
             placeholder: nil,
