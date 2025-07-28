@@ -62,6 +62,7 @@ class HomeViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureView()
+        configureBackButtonUI()
     }
 
 }
@@ -134,5 +135,11 @@ extension HomeViewController: UISearchBarDelegate {
             return nil
         }
         return text
+    }
+}
+
+extension HomeViewController {
+    func configureBackButtonUI() {
+        navigationItem.backButtonTitle = ""
     }
 }
