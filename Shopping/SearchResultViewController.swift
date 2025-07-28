@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class SearchResultViewController: UIViewController {
     var shoppingItems: [Item] = []
@@ -79,6 +80,7 @@ class SearchResultViewController: UIViewController {
         configureLayout()
         configureView()
         configureButtonActions()
+        configureSortButtonUI()
     }
     
     func configureButtonActions() {
@@ -102,7 +104,7 @@ class SearchResultViewController: UIViewController {
             break
         }
         configureSortButtonUI()
-    
+        callRequest(sort: selectedSortOption)
     }
     
     func configureSortButtonUI() {
@@ -168,5 +170,33 @@ extension SearchResultViewController: UIConfigurable {
     func configureView() {
         view.backgroundColor = .black
         navigationItem.title = keyword
+    }
+}
+
+
+extension SearchResultViewController {
+    func callRequest(sort: Sorting) {
+        guard let keyword = keyword else {
+            return
+        }
+        let target = URLs.shopping(for: keyword, sort: sort)
+            
+        guard let url = target.url else {
+            return
+        }
+        
+        let headers = target.headers
+        AF.request(url, method: .get, headers: headers)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: ShopItem.self) { response in
+        switch response.result {
+        case .success(let value):
+            self.shoppingItems = value.items
+            self.collectionView.reloadData()
+            self.countLabel.text = "\(value.total)개의 검색 결과"
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
