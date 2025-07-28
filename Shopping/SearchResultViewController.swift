@@ -12,6 +12,8 @@ class SearchResultViewController: UIViewController {
     var shoppingItems: [Item] = []
     var keyword: String?
     var selectedSortOption: Sorting = .sim
+    var total = 0
+    
     
     lazy var collectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -34,7 +36,6 @@ class SearchResultViewController: UIViewController {
         let label = UILabel()
         label.textColor = .systemGreen
         label.font = .systemFont(ofSize: 14, weight: .bold)
-        label.text = "1111111"
         return label
     }()
     
@@ -170,6 +171,8 @@ extension SearchResultViewController: UIConfigurable {
     func configureView() {
         view.backgroundColor = .black
         navigationItem.title = keyword
+        countLabel.text = "\(total.formatted())개의 검색 결과"
+
     }
 }
 

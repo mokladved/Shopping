@@ -112,6 +112,7 @@ extension HomeViewController: Networkable {
                     let vc = SearchResultViewController()
                     vc.shoppingItems = value.items
                     vc.keyword = data
+                    vc.total = value.total
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .failure(let error):
                     print(error)
