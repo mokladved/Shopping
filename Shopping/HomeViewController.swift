@@ -133,6 +133,7 @@ extension HomeViewController: UISearchBarDelegate {
     
     private func isValid(of text: String?) -> String? {
         guard let text = text, !text.trimmingCharacters(in: .whitespaces).isEmpty, text.count >= 2 else {
+            showAlert(message: "두 글자 이상 입력해 주세요")
             return nil
         }
         return text
