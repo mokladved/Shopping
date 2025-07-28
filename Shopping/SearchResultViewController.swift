@@ -8,15 +8,15 @@
 import UIKit
 import Alamofire
 
-class SearchResultViewController: UIViewController {
+final class SearchResultViewController: UIViewController {
     var shoppingItems: [Item] = []
     var keyword: String?
-    var selectedSortOption: Sorting = .sim
+    private var selectedSortOption: Sorting = .sim
     var total = 0
-    var start = 1
-    let paginationStandard = 30
+    private var start = 1
+    private let paginationStandard = 30
     
-    lazy var collectionView = {
+    private lazy var collectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = UIConstants.spacing * 2
@@ -33,42 +33,42 @@ class SearchResultViewController: UIViewController {
         return collectionView
     }()
     
-    let countLabel = {
+    private let countLabel = {
         let label = UILabel()
         label.textColor = .systemGreen
         label.font = .systemFont(ofSize: 14, weight: .bold)
         return label
     }()
     
-    let stackViewWrapeedButton = {
+    private let stackViewWrapeedButton = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 8
         return stackView
     }()
     
-    let simSortButton = {
+    private let simSortButton = {
         let button = UIButton()
         button.configuration = .unselectedSortButton()
         button.setTitle(Title.simSortButton, for: .normal)
         return button
     }()
     
-    let dateSortButton = {
+    private let dateSortButton = {
         let button = UIButton()
         button.configuration = .unselectedSortButton()
         button.setTitle(Title.dateSortButton, for: .normal)
         return button
     }()
     
-    let highPriceSortButton = {
+    private let highPriceSortButton = {
         let button = UIButton()
         button.configuration = .unselectedSortButton()
         button.setTitle(Title.highPriceSortButton, for: .normal)
         return button
     }()
     
-    let lowPriceSortButton = {
+    private let lowPriceSortButton = {
         let button = UIButton()
             button.configuration = .unselectedSortButton()
             button.setTitle(Title.lowPriceSortButton, for: .normal)
@@ -85,14 +85,14 @@ class SearchResultViewController: UIViewController {
         configureSortButtonUI()
     }
     
-    func configureButtonActions() {
+    private func configureButtonActions() {
         simSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
         dateSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
         highPriceSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
         lowPriceSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
     }
     
-    @objc func sortButtonTapped(_ sender: UIButton) {
+    @objc private func sortButtonTapped(_ sender: UIButton) {
         switch sender {
         case simSortButton:
             selectedSortOption = .sim
@@ -114,7 +114,7 @@ class SearchResultViewController: UIViewController {
         callRequest(sort: selectedSortOption)
     }
     
-    func configureSortButtonUI() {
+    private func configureSortButtonUI() {
         simSortButton.configureButton(isSelected: selectedSortOption == .sim)
         dateSortButton.configureButton(isSelected: selectedSortOption == .date)
         highPriceSortButton.configureButton(isSelected: selectedSortOption == .highPrice)
@@ -152,7 +152,6 @@ extension SearchResultViewController: UIConfigurable {
     func configureHierarchy() {
         view.addSubview(countLabel)
         view.addSubview(collectionView)
-            
         view.addSubview(stackViewWrapeedButton)
         
         stackViewWrapeedButton.addArrangedSubview(simSortButton)
@@ -189,7 +188,7 @@ extension SearchResultViewController: UIConfigurable {
 
 
 extension SearchResultViewController {
-    func callRequest(sort: Sorting) {
+    private func callRequest(sort: Sorting) {
         guard let keyword = keyword else {
             return
         }

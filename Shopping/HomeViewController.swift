@@ -9,8 +9,8 @@ import UIKit
 import Alamofire
 import SnapKit
 
-class HomeViewController: UIViewController {
-    let searchBar = {
+final class HomeViewController: UIViewController {
+    private let searchBar = {
         let bar = UISearchBar()
         bar.backgroundColor = .black
         bar.backgroundImage = UIImage()
@@ -34,21 +34,21 @@ class HomeViewController: UIViewController {
         return bar
     }()
     
-    let stackView = {
+    private let stackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.spacing = 64
         return stackView
     }()
     
-    let backImageView = {
+    private let backImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(resource: .shoppingMan)
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
-    let descLabel = {
+    private let descLabel = {
         let label = UILabel()
         label.textColor = .white
         label.text = Title.homeVCImageDescription
@@ -131,7 +131,7 @@ extension HomeViewController: UISearchBarDelegate {
         configure(for: keyword)
     }
     
-    func isValid(of text: String?) -> String? {
+    private func isValid(of text: String?) -> String? {
         guard let text = text, !text.trimmingCharacters(in: .whitespaces).isEmpty, text.count >= 2 else {
             return nil
         }
@@ -140,7 +140,7 @@ extension HomeViewController: UISearchBarDelegate {
 }
 
 extension HomeViewController {
-    func configureBackButtonUI() {
+    private func configureBackButtonUI() {
         navigationItem.backButtonTitle = ""
     }
 }

@@ -9,8 +9,8 @@ import UIKit
 import SnapKit
 
 
-class ViewController: UIViewController {
-    let goButton = {
+final class ViewController: UIViewController {
+    private let goButton = {
         let button = UIButton()
         button.configuration = .filledStyle(title: "쇼핑하기")
         return button
@@ -25,11 +25,11 @@ class ViewController: UIViewController {
         configureButtonAction()
     }
     
-    func configureButtonAction() {
+    private func configureButtonAction() {
         goButton.addTarget(self, action: #selector(showHome), for: .touchUpInside)
     }
     
-    @objc func showHome() {
+    @objc private func showHome() {
         let vc = HomeViewController()
         navigationController?.pushViewController(vc, animated: true)
     }

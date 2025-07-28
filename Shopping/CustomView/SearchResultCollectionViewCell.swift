@@ -9,30 +9,30 @@ import UIKit
 import Kingfisher
 import SnapKit
 
-class SearchResultCollectionViewCell: UICollectionViewCell {
+final class SearchResultCollectionViewCell: UICollectionViewCell {
     static let identifier = Title.SearchResultCVCIdentifier
     
-    let favoriteButton = {
+    private let favoriteButton = {
         let button = UIButton()
         button.configuration = .circleStyle(from: "heart")
         return button
     }()
     
-    let imageView = {
+    private let imageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 10
         imageView.clipsToBounds = true
         return imageView
     }()
     
-    let mallNameLabel = {
+    private let mallNameLabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.textColor = .systemGray
         return label
     }()
     
-    let productNameLabel = {
+    private let productNameLabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
         label.textColor = .white
@@ -40,7 +40,7 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    let priceLabel = {
+    private let priceLabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textColor = .white
