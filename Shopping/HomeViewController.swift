@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 import SnapKit
 
-final class HomeViewController: UIViewController {
+final class HomeViewController: BaseViewController {
     private let searchBar = {
         let bar = UISearchBar()
         bar.backgroundColor = .black
@@ -56,26 +56,16 @@ final class HomeViewController: UIViewController {
         label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
     }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureHierarchy()
-        configureLayout()
-        configureView()
-        configureBackButtonUI()
-    }
-
-}
-
-extension HomeViewController: UIConfigurable {
-    func configureHierarchy() {
+    
+    override func configureHierarchy() {
         view.addSubview(stackView)
         view.addSubview(searchBar)
         stackView.addArrangedSubview(backImageView)
         stackView.addArrangedSubview(descLabel)
+        
     }
     
-    func configureLayout() {
+    override func configureLayout() {
         stackView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(40)
             make.centerX.centerY.equalToSuperview()
@@ -85,15 +75,16 @@ extension HomeViewController: UIConfigurable {
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(16)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(8)
         }
-        
     }
     
-    func configureView() {
-        view.backgroundColor = .black
+    override func configureView() {
+        super.configureView()
+        configureBackButtonUI()
         navigationItem.title = Title.navTitle
         searchBar.delegate = self
     }
 }
+
 
 extension HomeViewController: Networkable {
     typealias Data = String
