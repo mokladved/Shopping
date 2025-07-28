@@ -27,6 +27,37 @@ class SearchResultViewController: UIViewController {
         return collectionView
     }()
     
+    let viewWrappedStackView = {
+        let view = UIView()
+        return view
+    }()
+    
+    let stackViewWrapeedButton = {
+        let stackView = UIStackView()
+        return stackView
+    }()
+    
+    let simSortButton = {
+        let button = UIButton()
+        return button
+    }()
+    
+    let dateSortButton = {
+        let button = UIButton()
+        return button
+    }()
+    
+    let highPriceSortButton = {
+        let button = UIButton()
+        return button
+    }()
+    
+    let lowPriceSortButton = {
+        let button = UIButton()
+        return button
+    }()
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -50,7 +81,12 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
 
 extension SearchResultViewController: UIConfigurable {
     func configureHierarchy() {
-        
+        view.addSubview(viewWrappedStackView)
+        viewWrappedStackView.addSubview(stackViewWrapeedButton)
+        stackViewWrapeedButton.addSubview(simSortButton)
+        stackViewWrapeedButton.addSubview(dateSortButton)
+        stackViewWrapeedButton.addSubview(highPriceSortButton)
+        stackViewWrapeedButton.addSubview(lowPriceSortButton)
     }
     
     func configureLayout() {
