@@ -39,7 +39,8 @@ extension UIButton.Configuration {
         configuration.cornerStyle = .capsule
         
         configuration.attributedTitle?.font = .systemFont(ofSize: 14, weight: .bold)
-        
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 4, bottom: 2, trailing: 4)
+
         return configuration
     }
     
@@ -55,6 +56,7 @@ extension UIButton.Configuration {
         configuration.background.cornerRadius = 5
         
         configuration.attributedTitle?.font = .systemFont(ofSize: 14)
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 4, bottom: 2, trailing: 4)
 
         return configuration
     }
