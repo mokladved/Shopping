@@ -34,12 +34,14 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     
     let mallNameLabel = {
         let label = UILabel()
+        label.textColor = .white
         label.text = "상점명"
         return label
     }()
     
     let productNameLabel = {
         let label = UILabel()
+        label.textColor = .white
         label.text = "상품명"
         label.numberOfLines = 2
         return label
@@ -47,6 +49,7 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     
     let priceLabel = {
         let label = UILabel()
+        label.textColor = .white
         label.text = "가격"
         return label
     }()
@@ -74,12 +77,33 @@ extension SearchResultCollectionViewCell: UIConfigurable {
     }
     
     func configureLayout() {
+        imageView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalTo(imageView.snp.width)
+        }
+        favoriteButton.snp.makeConstraints { make in
+            make.trailing.bottom.equalToSuperview().inset(8)
+            make.size.equalTo(30)
+        }
         
+        mallNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(imageView.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview().inset(8)
+        }
+        
+        productNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(mallNameLabel.snp.bottom).offset(4)
+            make.horizontalEdges.equalToSuperview().inset(8)
+        }
+        
+        priceLabel.snp.makeConstraints { make in
+            make.top.equalTo(productNameLabel.snp.bottom).offset(8)
+            make.horizontalEdges.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().inset(8)
+        }
     }
     
     func configureView() {
         contentView.backgroundColor = .clear
     }
-    
-    
 }
