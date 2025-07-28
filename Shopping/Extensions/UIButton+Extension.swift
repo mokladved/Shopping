@@ -9,7 +9,9 @@ import UIKit
 
 extension UIButton {
     func configureButton(isSelected: Bool) {
+        let title = self.currentTitle
         self.configuration = isSelected ? .selectedSortButton() : .unselectedSortButton()
+        self.setTitle(title, for: .normal)
     }
 }
 
@@ -42,7 +44,6 @@ extension UIButton.Configuration {
         var configuration = UIButton.Configuration.filled()
         configuration.baseBackgroundColor = .white
         configuration.baseForegroundColor = .black
-        configuration.cornerStyle = .capsule
         
         configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer({ title in
             var title = title

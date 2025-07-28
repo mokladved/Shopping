@@ -10,6 +10,7 @@ import UIKit
 class SearchResultViewController: UIViewController {
     var shoppingItems: [Item] = []
     var keyword: String?
+    var selectedSortOption: Sorting = .sim
     
     lazy var collectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -45,25 +46,29 @@ class SearchResultViewController: UIViewController {
     
     let simSortButton = {
         let button = UIButton()
-        button.configuration = .unselectedSortButton(title: Title.simSortButton)
+        button.configuration = .unselectedSortButton()
+        button.setTitle(Title.simSortButton, for: .normal)
         return button
     }()
     
     let dateSortButton = {
         let button = UIButton()
-        button.configuration = .unselectedSortButton(title: Title.dateSortButton)
+        button.configuration = .unselectedSortButton()
+        button.setTitle(Title.dateSortButton, for: .normal)
         return button
     }()
     
     let highPriceSortButton = {
         let button = UIButton()
-        button.configuration = .unselectedSortButton(title: Title.highPriceSortButton)
+        button.configuration = .unselectedSortButton()
+        button.setTitle(Title.highPriceSortButton, for: .normal)
         return button
     }()
     
     let lowPriceSortButton = {
         let button = UIButton()
-        button.configuration = .unselectedSortButton(title: Title.lowPriceSortButton)
+            button.configuration = .unselectedSortButton()
+            button.setTitle(Title.lowPriceSortButton, for: .normal)
         return button
     }()
 
@@ -73,7 +78,38 @@ class SearchResultViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureView()
-        
+        configureButtonActions()
+    }
+    
+    func configureButtonActions() {
+        simSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
+        dateSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
+        highPriceSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
+        lowPriceSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc func sortButtonTapped(_ sender: UIButton) {
+        switch sender {
+        case simSortButton:
+            selectedSortOption = .sim
+        case dateSortButton:
+            selectedSortOption = .date
+        case highPriceSortButton:
+            selectedSortOption = .highPrice
+        case lowPriceSortButton:
+            selectedSortOption = .lowPrice
+        default:
+            break
+        }
+        configureSortButtonUI()
+    
+    }
+    
+    func configureSortButtonUI() {
+        simSortButton.configureButton(isSelected: selectedSortOption == .sim)
+        dateSortButton.configureButton(isSelected: selectedSortOption == .date)
+        highPriceSortButton.configureButton(isSelected: selectedSortOption == .highPrice)
+        lowPriceSortButton.configureButton(isSelected: selectedSortOption == .lowPrice)
     }
 
 }
