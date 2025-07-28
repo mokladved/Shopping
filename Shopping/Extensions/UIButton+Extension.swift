@@ -7,6 +7,12 @@
 
 import UIKit
 
+extension UIButton {
+    func configureButton(isSelected: Bool) {
+        self.configuration = isSelected ? .selectedSortButton() : .unselectedSortButton()
+    }
+}
+
 extension UIButton.Configuration {
     static func filledStyle(title: String) -> UIButton.Configuration {
         var configuration = UIButton.Configuration.filled()
@@ -31,34 +37,40 @@ extension UIButton.Configuration {
         return configuration
     }
     
-    static func selectedSortButton(title: String) -> UIButton.Configuration {
+    @available(iOS 15.0, *)
+    static func selectedSortButton() -> UIButton.Configuration {
         var configuration = UIButton.Configuration.filled()
-        configuration.title = title
         configuration.baseBackgroundColor = .white
         configuration.baseForegroundColor = .black
         configuration.cornerStyle = .capsule
         
-        configuration.attributedTitle?.font = .systemFont(ofSize: 14, weight: .bold)
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer({ title in
+            var title = title
+            title.font = .systemFont(ofSize: 14, weight: .bold)
+            return title
+        })
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 4, bottom: 2, trailing: 4)
 
         return configuration
     }
     
-    static func unselectedSortButton(title: String) -> UIButton.Configuration {
+    @available(iOS 15.0, *)
+    static func unselectedSortButton() -> UIButton.Configuration {
         var configuration = UIButton.Configuration.plain()
-        configuration.title = title
         configuration.baseForegroundColor = .white
-        
         configuration.background.strokeColor = .white
         configuration.background.strokeWidth = 1.0
         
         configuration.cornerStyle = .fixed
         configuration.background.cornerRadius = 5
         
-        configuration.attributedTitle?.font = .systemFont(ofSize: 14)
+        configuration.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer({ title in
+            var title = title
+            title.font = .systemFont(ofSize: 14, weight: .bold)
+            return title
+        })
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 4, bottom: 2, trailing: 4)
 
         return configuration
     }
-    
 }
