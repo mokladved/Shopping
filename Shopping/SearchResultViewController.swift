@@ -105,6 +105,11 @@ class SearchResultViewController: UIViewController {
         default:
             break
         }
+        
+        self.start = 1
+        self.shoppingItems.removeAll()
+        self.collectionView.reloadData()
+        
         configureSortButtonUI()
         callRequest(sort: selectedSortOption)
     }
