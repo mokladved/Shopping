@@ -73,23 +73,27 @@ class SearchResultViewController: UIViewController {
         configureHierarchy()
         configureLayout()
         configureView()
+        
     }
 
 }
 
 extension SearchResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return shoppingItems.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = UIConstants.cellWidth()
-        let height = width * 1.3
+        let height = width * 1.6
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.identifier, for: indexPath) as! SearchResultCollectionViewCell
+        let item = shoppingItems[indexPath.item]
+        cell.configure(from: item)
+        
         return cell
     }
 }
