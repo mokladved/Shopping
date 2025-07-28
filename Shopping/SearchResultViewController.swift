@@ -13,7 +13,8 @@ class SearchResultViewController: UIViewController {
     var keyword: String?
     var selectedSortOption: Sorting = .sim
     var total = 0
-    
+    var start = 1
+    let paginationStandard = 30
     
     lazy var collectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -118,6 +119,11 @@ class SearchResultViewController: UIViewController {
 }
 
 extension SearchResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == (shoppingItems.count - 3) {
+            callRequest(sort: selectedSortOption)
+        }
+    }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return shoppingItems.count
     }
@@ -182,7 +188,8 @@ extension SearchResultViewController {
         guard let keyword = keyword else {
             return
         }
-        let target = URLs.shopping(for: keyword, sort: sort)
+        
+        let target = URLs.shopping(for: keyword, display: paginationStandard, sort: sort)
             
         guard let url = target.url else {
             return
@@ -194,11 +201,12 @@ extension SearchResultViewController {
             .responseDecodable(of: ShopItem.self) { response in
         switch response.result {
         case .success(let value):
-            self.shoppingItems = value.items
+            self.shoppingItems.append(contentsOf: value.items)
+            self.start += value.items.count
             self.collectionView.reloadData()
             self.countLabel.text = "\(value.total)개의 검색 결과"
-            case .failure(let error):
-                print(error)
+        case .failure(let error):
+            print(error)
             }
         }
     }
