@@ -31,4 +31,32 @@ extension UIButton.Configuration {
         return configuration
     }
     
+    static func selectedSortButton(title: String) -> UIButton.Configuration {
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = title
+        configuration.baseBackgroundColor = .white
+        configuration.baseForegroundColor = .black
+        configuration.cornerStyle = .capsule
+        
+        configuration.attributedTitle?.font = .systemFont(ofSize: 14, weight: .bold)
+        
+        return configuration
+    }
+    
+    static func unselectedSortButton(title: String) -> UIButton.Configuration {
+        var configuration = UIButton.Configuration.plain()
+        configuration.title = title
+        configuration.baseForegroundColor = .white
+        
+        configuration.background.strokeColor = .white
+        configuration.background.strokeWidth = 1.0
+        
+        configuration.cornerStyle = .fixed
+        configuration.background.cornerRadius = 5
+        
+        configuration.attributedTitle?.font = .systemFont(ofSize: 14)
+
+        return configuration
+    }
+    
 }
