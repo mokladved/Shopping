@@ -8,7 +8,7 @@
 import UIKit
 
 struct UIConstants {
-    static let spacing: CGFloat = 8
+    static let spacing: CGFloat = 12
     static let columns: CGFloat = 2
     static func cellWidth() -> CGFloat {
         let deviceWidth = UIScreen.main.bounds.width

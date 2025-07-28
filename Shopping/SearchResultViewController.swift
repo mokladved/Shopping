@@ -153,18 +153,18 @@ extension SearchResultViewController: UIConfigurable {
     func configureLayout() {
         countLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.leading.equalTo(view.safeAreaLayoutGuide).inset(16)
+            make.leading.equalTo(view.safeAreaLayoutGuide).inset(12)
         }
         
         stackViewWrapeedButton.snp.makeConstraints { make in
             make.top.equalTo(countLabel.snp.bottom).offset(8)
-            make.leading.equalTo(view.safeAreaLayoutGuide).inset(16)
+            make.leading.equalTo(view.safeAreaLayoutGuide).inset(12)
             make.height.equalTo(36)
         }
 
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(stackViewWrapeedButton.snp.bottom).offset(16)
-            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
         }
     }
     

@@ -27,12 +27,14 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     
     let mallNameLabel = {
         let label = UILabel()
-        label.textColor = .white
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .systemGray
         return label
     }()
     
     let productNameLabel = {
         let label = UILabel()
+        label.font = .systemFont(ofSize: 16)
         label.textColor = .white
         label.numberOfLines = 2
         return label
@@ -40,6 +42,7 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     
     let priceLabel = {
         let label = UILabel()
+        label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textColor = .white
         return label
     }()
@@ -116,7 +119,12 @@ extension SearchResultCollectionViewCell: DataConfigurable {
             ]
         )
         mallNameLabel.text = data.mallName
-        priceLabel.text = data.lprice
         productNameLabel.text = data.title
+        if let price = Int(data.lprice) {
+            priceLabel.text = price.formatted()
+        } else {
+            priceLabel.text = data.lprice
+        }
+        
     }
 }
