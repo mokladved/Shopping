@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Configurable {
+protocol DataConfigurable {
     associatedtype Data
     func configure(from data: Data)
 }
