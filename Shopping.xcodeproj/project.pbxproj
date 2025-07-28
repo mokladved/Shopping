@@ -35,6 +35,11 @@
 			path = Shopping;
 			sourceTree = "<group>";
 		};
+		2B4E9B412E37EAFE00759E3F /* Base */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Base;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +59,7 @@
 		2B4E987D2E33611E00759E3F = {
 			isa = PBXGroup;
 			children = (
+				2B4E9B412E37EAFE00759E3F /* Base */,
 				2B4E98882E33611E00759E3F /* Shopping */,
 				2B4E98872E33611E00759E3F /* Products */,
 			);
@@ -84,6 +90,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				2B4E98882E33611E00759E3F /* Shopping */,
+				2B4E9B412E37EAFE00759E3F /* Base */,
 			);
 			name = Shopping;
 			packageProductDependencies = (

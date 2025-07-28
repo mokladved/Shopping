@@ -9,21 +9,12 @@ import UIKit
 import SnapKit
 
 
-final class ViewController: UIViewController {
+final class ViewController: BaseViewController {
     private let goButton = {
         let button = UIButton()
         button.configuration = .filledStyle(title: "쇼핑하기")
         return button
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureHierarchy()
-        configureLayout()
-        configureView()
-        configureBackButtonUI()
-        configureButtonAction()
-    }
     
     private func configureButtonAction() {
         goButton.addTarget(self, action: #selector(showHome), for: .touchUpInside)
@@ -33,16 +24,12 @@ final class ViewController: UIViewController {
         let vc = HomeViewController()
         navigationController?.pushViewController(vc, animated: true)
     }
-
-
-}
-
-extension ViewController: UIConfigurable {
-    func configureHierarchy() {
+    
+    override func configureHierarchy() {
         view.addSubview(goButton)
     }
     
-    func configureLayout() {
+    override func configureLayout() {
         goButton.snp.makeConstraints { make in
             make.width.equalTo(200)
             make.height.equalTo(100)
@@ -50,10 +37,13 @@ extension ViewController: UIConfigurable {
         }
     }
     
-    func configureView() {
-        view.backgroundColor = .black
+    override func configureView() {
+        super.configureView()
+        configureBackButtonUI()
+        configureButtonAction()
     }
 }
+
 
 extension ViewController {
     func configureBackButtonUI() {
