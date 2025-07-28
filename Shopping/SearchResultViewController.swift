@@ -208,7 +208,7 @@ extension SearchResultViewController {
                     self.shoppingItems.append(contentsOf: value.items)
                     self.start += value.items.count
                     self.collectionView.reloadData()
-                    self.countLabel.text = "\(value.total)개의 검색 결과"
+                    self.countLabel.text = "\(value.total.formatted()) 개의 검색 결과"
                     
                     if self.start == 1 {
                         self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
