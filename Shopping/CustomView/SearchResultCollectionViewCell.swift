@@ -19,11 +19,11 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     }()
     
     let imageView = {
-        let imaageView = UIImageView()
-        return imaageView
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
+        return imageView
     }()
-    
-    
     
     let mallNameLabel = {
         let label = UILabel()
