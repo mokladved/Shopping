@@ -7,11 +7,10 @@
 
 import UIKit
 import Kingfisher
+import SnapKit
 
 class SearchResultCollectionViewCell: UICollectionViewCell {
     static let identifier = Title.SearchResultCVCIdentifier
-
-    var data: ShopItem?
     
     let viewWrappedImageView = {
         let view = UIView()
@@ -26,7 +25,6 @@ class SearchResultCollectionViewCell: UICollectionViewCell {
     
     let imageView = {
         let imaageView = UIImageView()
-        imaageView.image = UIImage(systemName: "heart")
         return imaageView
     }()
     
@@ -105,5 +103,26 @@ extension SearchResultCollectionViewCell: UIConfigurable {
     
     func configureView() {
         contentView.backgroundColor = .clear
+    }
+}
+
+
+extension SearchResultCollectionViewCell: DataConfigurable {
+    typealias Data = Item
+    
+    func configure(from data: Item) {
+        let imageUrl = URL(string: data.image)
+        imageView.kf.setImage(
+            with: imageUrl,
+            placeholder: nil,
+            options: [
+                .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ]
+        )
+        mallNameLabel.text = data.mallName
+        priceLabel.text = data.lprice
+        productNameLabel.text = data.title
     }
 }
