@@ -119,7 +119,7 @@ extension SearchResultCollectionViewCell: DataConfigurable {
             ]
         )
         mallNameLabel.text = data.mallName
-        productNameLabel.text = data.title
+        productNameLabel.text = data.title.removedTags
         if let price = Int(data.lprice) {
             priceLabel.text = price.formatted()
         } else {
