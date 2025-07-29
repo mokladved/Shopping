@@ -90,25 +90,21 @@ extension HomeViewController: Networkable {
     typealias Data = String
     
     func configure(for data: String) {
-        let requestURL =  URLs.shopping(for: data, display: Constants.API.paginationStandards)
-        guard let url = requestURL.url else {
-            return
-        }
-        let headers = requestURL.headers
-        AF.request(url, method: .get, headers: headers)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: ShopItem.self) { response in
-                switch response.result {
-                case .success(let value):
-                    let vc = SearchResultViewController()
-                    vc.shoppingItems = value.items
-                    vc.keyword = data
-                    vc.total = value.total
-                    self.navigationController?.pushViewController(vc, animated: true)
-                case .failure(let error):
-                    print(error)
+        let target = URLs.shopping(for: data, display: Constants.API.paginationStandards)
+        
+        NetworkManager.shared.callShopItemRequest(
+            target: target,
+            success: { shopItem in
+                let vc = SearchResultViewController()
+                vc.shoppingItems = shopItem.items
+                vc.keyword = data
+                vc.total = shopItem.total
+                self.navigationController?.pushViewController(vc, animated: true)
+            },
+            failure: { error in
+                self.showAlert(message: error.errorMessage)
             }
-        }
+        )
     }
 }
 

@@ -240,74 +240,40 @@ extension SearchResultViewController: UIConfigurable {
 
 extension SearchResultViewController {
     private func callRequest(sort: Sorting) {
-        guard let keyword = keyword else {
-            return
-        }
-        
+        guard let keyword = keyword else { return }
         let target = URLs.shopping(for: keyword, display: Constants.API.paginationStandards, sort: sort)
         
-        guard let url = target.url else {
-            return
-        }
-        
-        let headers = target.headers
-        AF.request(url, method: .get, headers: headers)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: ShopItem.self) { response in
-                switch response.result {
-                case .success(let value):
-                    self.shoppingItems.append(contentsOf: value.items)
-                    self.start += value.items.count
-                    self.collectionView.reloadData()
-                    self.countLabel.text = "\(value.total.formatted()) 개의 검색 결과"
-                    
-                    if self.start == 1 {
-                        self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-                    }
-                case .failure(let error):
-                    print(error)
-                    guard let statusCode = response.response?.statusCode else {
-                        return
-                    }
-                    
-                    if let errorType = NetworkError(rawValue: statusCode) {
-                        self.showAlert(message: errorType.errorMessage)
-                    } else {
-                        self.showAlert(message: "알 수 없는 오류가 발생했습니다")
-                    }
+        NetworkManager.shared.callShopItemRequest(
+            target: target,
+            success: { shopItem in
+                self.shoppingItems.append(contentsOf: shopItem.items)
+                self.start += shopItem.items.count
+                self.collectionView.reloadData()
+                self.countLabel.text = "\(shopItem.total.formatted()) 개의 검색 결과"
+                
+                if self.start == 1 {
+                    self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
                 }
+            },
+            failure: { error in
+                self.showAlert(message: error.errorMessage)
             }
+        )
     }
-    
+        
     private func callRecommendRequest() {
         let target = URLs.shopping(for: recommendKeyword, display: Constants.API.maxDisplayRecommendItem)
         
-        guard let url = target.url else {
-            return
-        }
-        
-        let headers = target.headers
-        AF.request(url, method: .get, headers: headers)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: ShopItem.self) { response in
-                switch response.result {
-                case .success(let value):
-                    self.recommendedItems = value.items
-                    self.recommendCollectionView.reloadData()
-
-                case .failure(let error):
-                    print(error)
-                    guard let statusCode = response.response?.statusCode else {
-                        return
-                    }
-                    
-                    if let errorType = NetworkError(rawValue: statusCode) {
-                        self.showAlert(message: errorType.errorMessage)
-                    } else {
-                        self.showAlert(message: "알 수 없는 오류가 발생했습니다")
-                    }
-                }
+        NetworkManager.shared.callShopItemRequest(
+            target: target,
+            success: { shopItem in
+                self.recommendedItems = shopItem.items
+                self.recommendCollectionView.reloadData()
+            },
+            failure: { error in
+                self.showAlert(message: error.errorMessage)
             }
+        )
     }
 }
 
