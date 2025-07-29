@@ -12,6 +12,11 @@ import SnapKit
 final class SearchResultViewController: UIViewController {
     var shoppingItems: [Item] = []
     var keyword: String?
+    
+    var recommendedItems: [Item] = []
+    let recommendKeyword = Constants.Title.recommendKeyword
+    
+    
     private var selectedSortOption: Sorting = .sim
     var total = 0
     private var start = 1
@@ -100,6 +105,7 @@ final class SearchResultViewController: UIViewController {
         configureView()
         configureButtonActions()
         configureSortButtonUI()
+        callRecommendRequest(sort: selectedSortOption)
     }
     
     private func configureButtonActions() {
@@ -147,7 +153,12 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
         }
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return shoppingItems.count
+        if collectionView == self.collectionView {
+            return shoppingItems.count
+        } else {
+            return min(100, recommendedItems.count)
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -172,7 +183,7 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
-            let item = shoppingItems[indexPath.item]
+            let item = recommendedItems[indexPath.item]
             cell.configure(from: item)
             return cell
         }
@@ -245,7 +256,6 @@ extension SearchResultViewController {
             .responseDecodable(of: ShopItem.self) { response in
                 switch response.result {
                 case .success(let value):
-                    print(value.items.count)
                     self.shoppingItems.append(contentsOf: value.items)
                     self.start += value.items.count
                     self.collectionView.reloadData()
@@ -268,4 +278,37 @@ extension SearchResultViewController {
                 }
             }
     }
+    
+    private func callRecommendRequest(sort: Sorting) {
+        let target = URLs.shopping(for: recommendKeyword, display: Constants.API.maxDisplayRecommendItem)
+        
+        guard let url = target.url else {
+            return
+        }
+        
+        let headers = target.headers
+        AF.request(url, method: .get, headers: headers)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: ShopItem.self) { response in
+                switch response.result {
+                case .success(let value):
+                    self.recommendedItems.append(contentsOf: value.items)
+                    self.start += value.items.count
+                    self.recommendCollectionView.reloadData()
+
+                case .failure(let error):
+                    print(error)
+                    guard let statusCode = response.response?.statusCode else {
+                        return
+                    }
+                    
+                    if let errorType = NetworkError(rawValue: statusCode) {
+                        self.showAlert(message: errorType.errorMessage)
+                    } else {
+                        self.showAlert(message: "알 수 없는 오류가 발생했습니다")
+                    }
+                }
+            }
+    }
 }
+

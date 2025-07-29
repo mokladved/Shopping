@@ -38,11 +38,13 @@ enum Constants {
         static let highPriceSortButton = "가격높은순"
         static let lowPriceSortButton = "가격낮은순"
         static let recommendCVCIdentifier = "RecommendCollectionViewCell"
+        static let recommendKeyword = "테니스"
     }
     
     enum API {
         static let baseURL = "https://openapi.naver.com/"
         static let path = "v1/search/shop.json"
         static let paginationStandards = 30
+        static let maxDisplayRecommendItem = 50
     }
 }
