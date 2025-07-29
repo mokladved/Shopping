@@ -215,6 +215,15 @@ extension SearchResultViewController {
                     }
                 case .failure(let error):
                     print(error)
+                    guard let statusCode = response.response?.statusCode else {
+                        return
+                    }
+                    
+                    if let errorType = NetworkError(rawValue: statusCode) {
+                        self.showAlert(message: errorType.errorMessage)
+                    } else {
+                        self.showAlert(message: "알 수 없는 오류가 발생했습니다")
+                    }
                 }
             }
     }
