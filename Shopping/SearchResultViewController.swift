@@ -7,6 +7,7 @@
 
 import UIKit
 import Alamofire
+import SnapKit
 
 final class SearchResultViewController: UIViewController {
     var shoppingItems: [Item] = []
@@ -14,13 +15,12 @@ final class SearchResultViewController: UIViewController {
     private var selectedSortOption: Sorting = .sim
     var total = 0
     private var start = 1
-    private let paginationStandard = 30
     
     private lazy var collectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = UIConstants.spacing * 2
-        layout.minimumInteritemSpacing = UIConstants.spacing
+        layout.minimumLineSpacing = Constants.UI.Vertical.spacing * 2
+        layout.minimumInteritemSpacing = Constants.UI.Vertical.spacing
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
@@ -29,6 +29,23 @@ final class SearchResultViewController: UIViewController {
         collectionView.dataSource = self
             
         collectionView.register(SearchResultCollectionViewCell.self, forCellWithReuseIdentifier: SearchResultCollectionViewCell.identifier)
+        
+        return collectionView
+    }()
+    
+    private lazy var recommendCollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = Constants.UI.Horizontal.spacing
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        collectionView.register(RecommendCollectionViewCell.self, forCellWithReuseIdentifier: RecommendCollectionViewCell.identifier)
+        collectionView.showsHorizontalScrollIndicator = false
         
         return collectionView
     }()
@@ -50,28 +67,28 @@ final class SearchResultViewController: UIViewController {
     private let simSortButton = {
         let button = UIButton()
         button.configuration = .unselectedSortButton()
-        button.setTitle(Title.simSortButton, for: .normal)
+        button.setTitle(Constants.Title.simSortButton, for: .normal)
         return button
     }()
     
     private let dateSortButton = {
         let button = UIButton()
         button.configuration = .unselectedSortButton()
-        button.setTitle(Title.dateSortButton, for: .normal)
+        button.setTitle(Constants.Title.dateSortButton, for: .normal)
         return button
     }()
     
     private let highPriceSortButton = {
         let button = UIButton()
         button.configuration = .unselectedSortButton()
-        button.setTitle(Title.highPriceSortButton, for: .normal)
+        button.setTitle(Constants.Title.highPriceSortButton, for: .normal)
         return button
     }()
     
     private let lowPriceSortButton = {
         let button = UIButton()
-            button.configuration = .unselectedSortButton()
-            button.setTitle(Title.lowPriceSortButton, for: .normal)
+        button.configuration = .unselectedSortButton()
+        button.setTitle(Constants.Title.lowPriceSortButton, for: .normal)
         return button
     }()
 
@@ -134,17 +151,31 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = UIConstants.cellWidth()
-        let height = width * 1.6
-        return CGSize(width: width, height: height)
+        if collectionView  == self.collectionView {
+            let width = Constants.UI.Vertical.cellWidth
+            let height = width * 1.6
+            return CGSize(width: width, height: height)
+        } else {
+            let width = Constants.UI.Horizontal.cellWidth
+            let height = width
+            return CGSize(width: width, height: height)
+        }
+        
     }
     
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.identifier, for: indexPath) as! SearchResultCollectionViewCell
-        let item = shoppingItems[indexPath.item]
-        cell.configure(from: item)
-        
-        return cell
+        if collectionView == self.collectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.identifier, for: indexPath) as! SearchResultCollectionViewCell
+            let item = shoppingItems[indexPath.item]
+            cell.configure(from: item)
+            return cell
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
+            let item = shoppingItems[indexPath.item]
+            cell.configure(from: item)
+            return cell
+        }
     }
 }
 
@@ -152,7 +183,9 @@ extension SearchResultViewController: UIConfigurable {
     func configureHierarchy() {
         view.addSubview(countLabel)
         view.addSubview(collectionView)
+        view.addSubview(recommendCollectionView)
         view.addSubview(stackViewWrapeedButton)
+        
         
         stackViewWrapeedButton.addArrangedSubview(simSortButton)
         stackViewWrapeedButton.addArrangedSubview(dateSortButton)
@@ -176,6 +209,13 @@ extension SearchResultViewController: UIConfigurable {
             make.top.equalTo(stackViewWrapeedButton.snp.bottom).offset(16)
             make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
         }
+        
+        recommendCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(collectionView.snp.bottom).offset(24)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(12)
+            make.height.equalTo(Constants.UI.Horizontal.cellWidth)
+        }
     }
     
     func configureView() {
@@ -193,7 +233,7 @@ extension SearchResultViewController {
             return
         }
         
-        let target = URLs.shopping(for: keyword, display: paginationStandard, sort: sort)
+        let target = URLs.shopping(for: keyword, display: Constants.API.paginationStandards, sort: sort)
         
         guard let url = target.url else {
             return
@@ -205,6 +245,7 @@ extension SearchResultViewController {
             .responseDecodable(of: ShopItem.self) { response in
                 switch response.result {
                 case .success(let value):
+                    print(value.items.count)
                     self.shoppingItems.append(contentsOf: value.items)
                     self.start += value.items.count
                     self.collectionView.reloadData()
