@@ -12,7 +12,7 @@ enum Constants {
         enum Vertical {
             static let spacing: CGFloat = 12
             static let columns: CGFloat = 2
-            static func cellWidth() -> CGFloat {
+            static var cellWidth: CGFloat {
                 let deviceWidth = UIScreen.main.bounds.width
                 return (deviceWidth - spacing * (columns + 1)) / columns
             }
@@ -21,7 +21,7 @@ enum Constants {
         enum Horizontal {
             static let spacing: CGFloat = 4
             static let columns: CGFloat = 2
-            static func cellWidth() -> CGFloat {
+            static var cellWidth: CGFloat {
                 let deviceWidth = UIScreen.main.bounds.width
                 return (deviceWidth - spacing * (columns + 1)) / columns
             }
