@@ -23,7 +23,7 @@ final class HomeViewController: BaseViewController {
         textField.clipsToBounds = true
         
         textField.attributedPlaceholder = NSAttributedString(
-            string: Title.placeholder,
+            string: Constants.Title.placeholder,
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.myFGLightGray]
         )
         
@@ -51,7 +51,7 @@ final class HomeViewController: BaseViewController {
     private let descLabel = {
         let label = UILabel()
         label.textColor = .white
-        label.text = Title.homeVCImageDescription
+        label.text = Constants.Title.homeVCImageDescription
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
@@ -80,7 +80,7 @@ final class HomeViewController: BaseViewController {
     override func configureView() {
         super.configureView()
         configureBackButtonUI()
-        navigationItem.title = Title.navTitle
+        navigationItem.title = Constants.Title.navTitle
         searchBar.delegate = self
     }
 }
@@ -90,7 +90,7 @@ extension HomeViewController: Networkable {
     typealias Data = String
     
     func configure(for data: String) {
-        let requestURL =  URLs.shopping(for: data)
+        let requestURL =  URLs.shopping(for: data, display: Constants.API.paginationStandards)
         guard let url = requestURL.url else {
             return
         }
