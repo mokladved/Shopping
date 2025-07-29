@@ -18,7 +18,18 @@ class RecommendCollectionViewCell: BaseCollectionViewCell {
     }()
     
     override func configure(from data: Item) {
-        
+        let imageURL = URL(string: data.image)
+        guard let url = imageURL else {
+            return
+        }
+        imageView.kf.setImage(
+            with: url,
+            placeholder: nil,
+            options: [
+                .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ])
     }
     
     override func configureHierarchy() {
@@ -26,7 +37,6 @@ class RecommendCollectionViewCell: BaseCollectionViewCell {
     }
     
     override func configureLayout() {
-        
     }
     
     override func configureView() {
