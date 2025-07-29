@@ -10,7 +10,7 @@ import Kingfisher
 import SnapKit
 
 class RecommendCollectionViewCell: BaseCollectionViewCell {
-    static let identifier = Title.recommendCVCIdentifier
+    static let identifier = Constants.Title.recommendCVCIdentifier
     
     let imageView = {
         let imageView = UIImageView()

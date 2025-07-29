@@ -10,7 +10,7 @@ import Kingfisher
 import SnapKit
 
 final class SearchResultCollectionViewCell: UICollectionViewCell {
-    static let identifier = Title.SearchResultCVCIdentifier
+    static let identifier = Constants.Title.SearchResultCVCIdentifier
     
     private let favoriteButton = {
         let button = UIButton()
