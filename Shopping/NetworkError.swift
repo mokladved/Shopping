@@ -7,14 +7,15 @@
 
 import Foundation
 
-enum NetworkError: Error {
-    case badRequest
-    case unauthorized
-    case forbidden
-    case notFound
-    case tooManyRequests
-    case serverError
-    case serviceUnavailable
+enum NetworkError: Int, Error {
+    case badRequest = 400
+    case unauthorized = 401
+    case forbidden = 403
+    case notFound = 404
+    case tooManyRequests = 429
+    case serverError = 500
+    case serviceUnavailable = 503
+    case unknown
     
     var errorMessage: String {
         switch self {
@@ -32,6 +33,8 @@ enum NetworkError: Error {
             return "500: 서버에 문제가 발생했습니다."
         case .serviceUnavailable:
             return "503: 서비스 점검 중입니다. 잠시 후 다시 시도해주세요."
+        case .unknown:
+            return "알 수 없는 오류입니다."
         }
     }
 }
