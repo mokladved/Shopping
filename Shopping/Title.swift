@@ -16,4 +16,5 @@ enum Title {
     static let dateSortButton = "날짜순"
     static let highPriceSortButton = "가격높은순"
     static let lowPriceSortButton = "가격낮은순"
+    static let RecommendCVCIdentifier = "RecommendCollectionViewCell"
 }
