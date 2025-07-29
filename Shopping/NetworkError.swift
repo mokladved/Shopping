@@ -7,14 +7,14 @@
 
 import Foundation
 
-enum NetworkError: Int {
-    case badRequest = 400
-    case unauthorized = 401
-    case forbidden = 403
-    case notFound = 404
-    case tooManyRequests = 429
-    case serverError = 500
-    case serviceUnavailable = 503
+enum NetworkError: Error {
+    case badRequest
+    case unauthorized
+    case forbidden
+    case notFound
+    case tooManyRequests
+    case serverError
+    case serviceUnavailable
     
     var errorMessage: String {
         switch self {
