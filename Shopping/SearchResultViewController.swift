@@ -105,7 +105,7 @@ final class SearchResultViewController: UIViewController {
         configureView()
         configureButtonActions()
         configureSortButtonUI()
-        callRecommendRequest(sort: selectedSortOption)
+        callRecommendRequest()
     }
     
     private func configureButtonActions() {
@@ -156,7 +156,7 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
         if collectionView == self.collectionView {
             return shoppingItems.count
         } else {
-            return min(100, recommendedItems.count)
+            return min(Constants.API.maxDisplayRecommendItem, recommendedItems.count)
         }
         
     }
@@ -279,7 +279,7 @@ extension SearchResultViewController {
             }
     }
     
-    private func callRecommendRequest(sort: Sorting) {
+    private func callRecommendRequest() {
         let target = URLs.shopping(for: recommendKeyword, display: Constants.API.maxDisplayRecommendItem)
         
         guard let url = target.url else {
@@ -292,8 +292,7 @@ extension SearchResultViewController {
             .responseDecodable(of: ShopItem.self) { response in
                 switch response.result {
                 case .success(let value):
-                    self.recommendedItems.append(contentsOf: value.items)
-                    self.start += value.items.count
+                    self.recommendedItems = value.items
                     self.recommendCollectionView.reloadData()
 
                 case .failure(let error):
