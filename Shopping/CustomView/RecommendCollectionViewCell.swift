@@ -37,6 +37,11 @@ class RecommendCollectionViewCell: BaseCollectionViewCell {
     }
     
     override func configureLayout() {
+        imageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(16)
+            make.top.bottom.equalToSuperview()
+            make.height.equalTo(imageView.snp.width)
+        }
     }
     
     override func configureView() {
