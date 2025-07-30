@@ -67,7 +67,6 @@ final class HomeViewController: BaseViewController {
     
     override func configureLayout() {
         stackView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(40)
             make.centerX.centerY.equalToSuperview()
             make.size.equalTo(300)
         }
