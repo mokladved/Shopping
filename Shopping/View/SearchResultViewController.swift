@@ -10,16 +10,7 @@ import Alamofire
 import SnapKit
 
 final class SearchResultViewController: UIViewController {
-    var shoppingItems: [Item] = []
-    var keyword: String?
-    
-    var recommendedItems: [Item] = []
-    let recommendKeyword = Constants.Title.recommendKeyword
-    
-    
-    private var selectedSortOption: Sorting = .sim
-    var total = 0
-    private var start = 1
+    var viewModel: SearchResultViewModel!
     
     private lazy var collectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -29,10 +20,10 @@ final class SearchResultViewController: UIViewController {
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
-            
+                
         collectionView.delegate = self
         collectionView.dataSource = self
-            
+                
         collectionView.register(SearchResultCollectionViewCell.self, forCellWithReuseIdentifier: SearchResultCollectionViewCell.identifier)
         
         return collectionView
@@ -97,16 +88,77 @@ final class SearchResultViewController: UIViewController {
         return button
     }()
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureHierarchy()
         configureLayout()
         configureView()
         configureButtonActions()
-        configureSortButtonUI()
-        callRecommendRequest()
+        
+        bindData()
+        
+        viewModel.viewDidLoad()
     }
+    
+    private func bindData() {
+        viewModel.outputShoppingItems.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.collectionView.reloadData()
+        }
+        
+        viewModel.outputRecommendedItems.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.recommendCollectionView.reloadData()
+        }
+        
+        viewModel.outputTotalCountText.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.countLabel.text = self.viewModel.outputTotalCountText.value
+        }
+        
+        viewModel.outputSelectedSortOption.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
+            let selectedOption = self.viewModel.outputSelectedSortOption.value
+            self.configureSortButtonUI(selected: selectedOption)
+        }
+        
+        viewModel.outputErrorMessage.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
+            guard let message = self.viewModel.outputErrorMessage.value else {
+                return
+            }
+            
+            self.showAlert(message: message)
+        }
+        
+        viewModel.scrollTrigger.bind { [weak self] in
+            guard let self = self,
+                  self.viewModel.scrollTrigger.value != nil else {
+                return
+            }
+            self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        }
+        
+        viewModel.ouputTitle.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.navigationItem.title = title
+        }
+    }
+    
     
     private func configureButtonActions() {
         simSortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
@@ -116,53 +168,41 @@ final class SearchResultViewController: UIViewController {
     }
     
     @objc private func sortButtonTapped(_ sender: UIButton) {
+        var option: Sorting = .sim
         switch sender {
         case simSortButton:
-            selectedSortOption = .sim
+            option = .sim
         case dateSortButton:
-            selectedSortOption = .date
+            option = .date
         case highPriceSortButton:
-            selectedSortOption = .highPrice
+            option = .highPrice
         case lowPriceSortButton:
-            selectedSortOption = .lowPrice
+            option = .lowPrice
         default:
             break
         }
         
-        self.start = 1
-        self.shoppingItems.removeAll()
-        self.collectionView.reloadData()
-        
-        configureSortButtonUI()
-        callRequest(sort: selectedSortOption)
+        viewModel.sortOptionTrigger.value = option
     }
-    
-    private func configureSortButtonUI() {
-        simSortButton.configureButton(isSelected: selectedSortOption == .sim)
-        dateSortButton.configureButton(isSelected: selectedSortOption == .date)
-        highPriceSortButton.configureButton(isSelected: selectedSortOption == .highPrice)
-        lowPriceSortButton.configureButton(isSelected: selectedSortOption == .lowPrice)
-    }
-
 }
 
+
 extension SearchResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row == (shoppingItems.count - 3) && shoppingItems.count < total  {
-            callRequest(sort: selectedSortOption)
+            viewModel.lastPageTrigger.value = indexPath.row
         }
-    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == self.collectionView {
-            return shoppingItems.count
+            return viewModel.outputShoppingItems.value.count
         } else {
-            return min(Constants.API.maxDisplayRecommendItem, recommendedItems.count)
+            return min(Constants.API.maxDisplayRecommendItem, viewModel.outputRecommendedItems.value.count)
         }
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if collectionView  == self.collectionView {
+        if collectionView == self.collectionView {
             let width = Constants.UI.Vertical.cellWidth
             let height = width * 1.6
             return CGSize(width: width, height: height)
@@ -171,32 +211,31 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
             let height = width
             return CGSize(width: width, height: height)
         }
-        
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.collectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.identifier, for: indexPath) as! SearchResultCollectionViewCell
-            let item = shoppingItems[indexPath.item]
+            let item = viewModel.outputShoppingItems.value[indexPath.item]
             cell.configure(from: item)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
-            let item = recommendedItems[indexPath.item]
+            let item = viewModel.outputRecommendedItems.value[indexPath.item]
             cell.configure(from: item)
             return cell
         }
     }
 }
 
+
 extension SearchResultViewController: UIConfigurable {
+    
     func configureHierarchy() {
         view.addSubview(countLabel)
         view.addSubview(collectionView)
         view.addSubview(recommendCollectionView)
         view.addSubview(stackViewWrapeedButton)
-        
         
         stackViewWrapeedButton.addArrangedSubview(simSortButton)
         stackViewWrapeedButton.addArrangedSubview(dateSortButton)
@@ -219,7 +258,6 @@ extension SearchResultViewController: UIConfigurable {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(stackViewWrapeedButton.snp.bottom).offset(16)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(12)
-            
         }
         
         recommendCollectionView.snp.makeConstraints { make in
@@ -232,49 +270,12 @@ extension SearchResultViewController: UIConfigurable {
     
     func configureView() {
         view.backgroundColor = .black
-        navigationItem.title = keyword
-        countLabel.text = "\(total.formatted())개의 검색 결과"
-
+    }
+    
+    private func configureSortButtonUI(selected: Sorting) {
+        simSortButton.configureButton(isSelected: selected == .sim)
+        dateSortButton.configureButton(isSelected: selected == .date)
+        highPriceSortButton.configureButton(isSelected: selected == .highPrice)
+        lowPriceSortButton.configureButton(isSelected: selected == .lowPrice)
     }
 }
-
-
-extension SearchResultViewController {
-    private func callRequest(sort: Sorting) {
-        guard let keyword = keyword else { return }
-        let target = URLs.shopping(for: keyword, display: Constants.API.paginationStandards, sort: sort)
-        
-        NetworkManager.shared.callShopItemRequest(
-            target: target,
-            success: { shopItem in
-                self.shoppingItems.append(contentsOf: shopItem.items)
-                self.start += shopItem.items.count
-                self.collectionView.reloadData()
-                self.countLabel.text = "\(shopItem.total.formatted()) 개의 검색 결과"
-                
-                if self.start == 1 {
-                    self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-                }
-            },
-            failure: { error in
-                self.showAlert(message: error.errorMessage)
-            }
-        )
-    }
-        
-    private func callRecommendRequest() {
-        let target = URLs.shopping(for: recommendKeyword, display: Constants.API.maxDisplayRecommendItem)
-        
-        NetworkManager.shared.callShopItemRequest(
-            target: target,
-            success: { shopItem in
-                self.recommendedItems = shopItem.items
-                self.recommendCollectionView.reloadData()
-            },
-            failure: { error in
-                self.showAlert(message: error.errorMessage)
-            }
-        )
-    }
-}
-
