@@ -12,6 +12,8 @@ import SnapKit
 final class SearchResultCollectionViewCell: UICollectionViewCell {
     static let identifier = Constants.Title.SearchResultCVCIdentifier
     
+    var viewModel: SearchResultCellViewModel?
+    
     private let favoriteButton = {
         let button = UIButton()
         button.configuration = .circleStyle(from: "heart")
@@ -57,6 +59,29 @@ final class SearchResultCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
+    
+    
+    func configure(from data: SearchResultCellViewModel) {
+        self.viewModel = data
+
+        mallNameLabel.text = data.mallName
+        productNameLabel.text = data.productName
+        priceLabel.text = data.price
+        
+        imageView.kf.setImage(
+            with: data.imageURL,
+            placeholder: nil,
+            options: [
+                .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage
+            ]
+        )
+    }
 }
 
 extension SearchResultCollectionViewCell: UIConfigurable {
@@ -97,34 +122,5 @@ extension SearchResultCollectionViewCell: UIConfigurable {
     
     func configureView() {
         contentView.backgroundColor = .clear
-    }
-}
-
-
-extension SearchResultCollectionViewCell: DataConfigurable {
-    typealias Data = Item
-    
-    func configure(from data: Item) {
-        guard let imageUrl = URL(string: data.image) else {
-            return
-        }
-        
-        imageView.kf.setImage(
-            with: imageUrl,
-            placeholder: nil,
-            options: [
-                .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
-                .scaleFactor(UIScreen.main.scale),
-                .cacheOriginalImage
-            ]
-        )
-        mallNameLabel.text = data.mallName
-        productNameLabel.text = data.title.removedTags
-        if let price = Int(data.lprice) {
-            priceLabel.text = price.formatted()
-        } else {
-            priceLabel.text = data.lprice
-        }
-        
     }
 }
