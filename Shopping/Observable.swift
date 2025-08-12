@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Observable<T> {
+final class Observable<T> {
     private var action: (() -> Void)?
     
     var value: T {
@@ -22,6 +22,10 @@ class Observable<T> {
     
     func bind(action: @escaping () -> Void) {
         action()
+        self.action = action
+    }
+    
+    func lazyBind(action: @escaping () -> Void) {
         self.action = action
     }
 }
