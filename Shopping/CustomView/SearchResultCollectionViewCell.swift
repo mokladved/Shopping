@@ -27,14 +27,14 @@ final class SearchResultCollectionViewCell: UICollectionViewCell {
     
     private let mallNameLabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 12)
         label.textColor = .systemGray
         return label
     }()
     
     private let productNameLabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 14)
         label.textColor = .white
         label.numberOfLines = 2
         return label
@@ -42,7 +42,7 @@ final class SearchResultCollectionViewCell: UICollectionViewCell {
     
     private let priceLabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         label.textColor = .white
         return label
     }()
