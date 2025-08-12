@@ -10,6 +10,8 @@ import Alamofire
 import SnapKit
 
 final class HomeViewController: BaseViewController {
+    private let viewModel = HomeViewModel()
+    
     private let searchBar = {
         let bar = UISearchBar()
         bar.backgroundColor = .black
@@ -57,12 +59,16 @@ final class HomeViewController: BaseViewController {
         return label
     }()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bindData()
+    }
+    
     override func configureHierarchy() {
         view.addSubview(stackView)
         view.addSubview(searchBar)
         stackView.addArrangedSubview(backImageView)
         stackView.addArrangedSubview(descLabel)
-        
     }
     
     override func configureLayout() {
@@ -82,47 +88,36 @@ final class HomeViewController: BaseViewController {
         navigationItem.title = Constants.Title.navTitle
         searchBar.delegate = self
     }
-}
-
-
-extension HomeViewController: Networkable {
-    typealias Data = String
     
-    func configure(for data: String) {
-        let target = URLs.shopping(for: data, display: Constants.API.paginationStandards)
-        
-        NetworkManager.shared.callShopItemRequest(
-            target: target,
-            success: { shopItem in
-                let vc = SearchResultViewController()
-                vc.shoppingItems = shopItem.items
-                vc.keyword = data
-                vc.total = shopItem.total
-                self.navigationController?.pushViewController(vc, animated: true)
-            },
-            failure: { error in
-                self.showAlert(message: error.errorMessage)
+    private func bindData() {
+        viewModel.pushTrigger.bind { [weak self] in
+            guard let self = self,
+                  self.viewModel.pushTrigger.value != nil else {
+                return
             }
-        )
+            
+            let vc = SearchResultViewController()
+            vc.shoppingItems = self.viewModel.outputShoppingItems.value
+            vc.keyword = self.viewModel.outputKeyword.value
+            vc.total = self.viewModel.outputTotal.value
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        viewModel.outputErrorMessage.bind { [weak self] in
+            guard let self = self else {
+                return
+            }
+            guard let message = self.viewModel.outputErrorMessage.value else {
+                return
+            }
+            self.showAlert(message: message)
+        }
     }
 }
-
 
 extension HomeViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let input = searchBar.searchTextField.text
-        guard let keyword = isValid(of: input) else {
-            return
-        }
-        configure(for: keyword)
-    }
-    
-    private func isValid(of text: String?) -> String? {
-        guard let text = text, !text.trimmingCharacters(in: .whitespaces).isEmpty, text.count >= 2 else {
-            showAlert(message: "두 글자 이상 입력해 주세요")
-            return nil
-        }
-        return text
+        viewModel.inputSearchQuery.value = searchBar.text
     }
 }
 
