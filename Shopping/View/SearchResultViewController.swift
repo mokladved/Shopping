@@ -222,7 +222,8 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
             let item = viewModel.outputRecommendedItems.value[indexPath.item]
-            cell.configure(from: item)
+            let viewModel = RecommendCellViewModel(item: item)
+            cell.configure(from: viewModel)
             return cell
         }
     }

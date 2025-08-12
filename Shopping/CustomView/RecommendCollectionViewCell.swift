@@ -17,13 +17,9 @@ class RecommendCollectionViewCell: BaseCollectionViewCell {
         return imageView
     }()
     
-    override func configure(from data: Item) {
-        let imageURL = URL(string: data.image)
-        guard let url = imageURL else {
-            return
-        }
+    func configure(from data: RecommendCellViewModel) {
         imageView.kf.setImage(
-            with: url,
+            with: data.imageURL,
             placeholder: nil,
             options: [
                 .processor(DownsamplingImageProcessor(size: imageView.bounds.size)),
