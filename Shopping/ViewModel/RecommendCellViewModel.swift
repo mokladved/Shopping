@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecommendCellViewModel {
+final class RecommendCellViewModel {
     let imageURL: URL?
     
     init(item: Item) {

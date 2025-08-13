@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SearchResultCellViewModel {
+final class SearchResultCellViewModel {
     
     let imageURL: URL?
     let mallName: String
