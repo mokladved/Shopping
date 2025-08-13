@@ -97,9 +97,12 @@ final class HomeViewController: BaseViewController {
             }
             
             let vc = SearchResultViewController()
-            vc.shoppingItems = self.viewModel.outputShoppingItems.value
-            vc.keyword = self.viewModel.outputKeyword.value
-            vc.total = self.viewModel.outputTotal.value
+            let searchResultViewModel = SearchResultViewModel(
+                keyword: self.viewModel.outputKeyword.value,
+                initialItems: self.viewModel.outputShoppingItems.value,
+                total: self.viewModel.outputTotal.value
+                )
+            vc.viewModel = searchResultViewModel
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
