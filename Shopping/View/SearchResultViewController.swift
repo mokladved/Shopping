@@ -217,7 +217,8 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
         if collectionView == self.collectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.identifier, for: indexPath) as! SearchResultCollectionViewCell
             let item = viewModel.outputShoppingItems.value[indexPath.item]
-            cell.configure(from: item)
+            let viewMdoel = SearchResultCellViewModel(item: item)
+            cell.configure(from: viewMdoel)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
