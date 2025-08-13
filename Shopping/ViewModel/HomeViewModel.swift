@@ -8,21 +8,30 @@
 import Foundation
 
 final class HomeViewModel {
-    let inputSearchQuery: Observable<String?> = Observable(nil)
-    let outputShoppingItems: Observable<[Item]> = Observable([])
-    let outputKeyword: Observable<String> = Observable("")
-    let outputTotal: Observable<Int> = Observable(0)
-
-    let outputErrorMessage: Observable<String?> = Observable(nil)
+    struct Input {
+        let searchQuery: Observable<String?> = Observable(nil)
+    }
     
-    let pushTrigger: Observable<Void?> = Observable(nil)
+    struct Output {
+        let shoppingItems: Observable<[Item]> = Observable([])
+        let keyword: Observable<String> = Observable("")
+        let total: Observable<Int> = Observable(0)
+        let errorMessage: Observable<String?> = Observable(nil)
+        let pushTrigger: Observable<Void?> = Observable(nil)
+    }
+    
+    let input: Input
+    let output: Output
     
     init() {
-        inputSearchQuery.bind { [weak self] in
+        input = Input()
+        output = Output()
+        
+        input.searchQuery.bind { [weak self] in
             guard let self = self else {
                 return
             }
-            guard let query = self.inputSearchQuery.value else {
+            guard let query = self.input.searchQuery.value else {
                 return
             }
             self.searchButtonTapped(text: query)
@@ -30,12 +39,11 @@ final class HomeViewModel {
     }
     
     
-    
     func searchButtonTapped(text: String?) {
         guard let text = text,
                 !text.trimmingCharacters(in: .whitespaces).isEmpty,
                 text.count >= 2 else {
-            outputErrorMessage.value = "두 글자 이상 입력해 주세요"
+            output.errorMessage.value = "두 글자 이상 입력해 주세요"
             return
         }
         
@@ -46,15 +54,15 @@ final class HomeViewModel {
             success: { [weak self] shopItem in
                 guard let self = self else { return }
                 
-                self.outputShoppingItems.value = shopItem.items
-                self.outputKeyword.value = text
-                self.outputTotal.value = shopItem.total
+                self.output.shoppingItems.value = shopItem.items
+                self.output.keyword.value = text
+                self.output.total.value = shopItem.total
                 
-                self.pushTrigger.value = ()
+                self.output.pushTrigger.value = ()
                 
             },
             failure: { [weak self] error in
-                self?.outputErrorMessage.value = error.errorMessage
+                self?.output.errorMessage.value = error.errorMessage
             }
         )
     }

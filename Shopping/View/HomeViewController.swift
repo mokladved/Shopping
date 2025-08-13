@@ -90,27 +90,27 @@ final class HomeViewController: BaseViewController {
     }
     
     private func bindData() {
-        viewModel.pushTrigger.bind { [weak self] in
+        viewModel.output.pushTrigger.bind { [weak self] in
             guard let self = self,
-                  self.viewModel.pushTrigger.value != nil else {
+                  self.viewModel.output.pushTrigger.value != nil else {
                 return
             }
             
             let vc = SearchResultViewController()
             let searchResultViewModel = SearchResultViewModel(
-                keyword: self.viewModel.outputKeyword.value,
-                initialItems: self.viewModel.outputShoppingItems.value,
-                total: self.viewModel.outputTotal.value
+                keyword: self.viewModel.output.keyword.value,
+                initialItems: self.viewModel.output.shoppingItems.value,
+                total: self.viewModel.output.total.value
                 )
             vc.viewModel = searchResultViewModel
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        viewModel.outputErrorMessage.bind { [weak self] in
+        viewModel.output.errorMessage.bind { [weak self] in
             guard let self = self else {
                 return
             }
-            guard let message = self.viewModel.outputErrorMessage.value else {
+            guard let message = self.viewModel.output.errorMessage.value else {
                 return
             }
             self.showAlert(message: message)
@@ -120,7 +120,7 @@ final class HomeViewController: BaseViewController {
 
 extension HomeViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        viewModel.inputSearchQuery.value = searchBar.text
+        viewModel.input.searchQuery.value = searchBar.text
     }
 }
 

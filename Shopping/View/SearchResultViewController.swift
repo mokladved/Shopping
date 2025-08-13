@@ -10,6 +10,7 @@ import Alamofire
 import SnapKit
 
 final class SearchResultViewController: UIViewController {
+    // FIXME: Forced Unwrapping 사용하지 않는 방법 고민
     var viewModel: SearchResultViewModel!
     
     private lazy var collectionView = {
@@ -101,57 +102,57 @@ final class SearchResultViewController: UIViewController {
     }
     
     private func bindData() {
-        viewModel.outputShoppingItems.bind { [weak self] in
+        viewModel.output.shoppingItems.bind { [weak self] in
             guard let self = self else {
                 return
             }
             self.collectionView.reloadData()
         }
         
-        viewModel.outputRecommendedItems.bind { [weak self] in
+        viewModel.output.recommendedItems.bind { [weak self] in
             guard let self = self else {
                 return
             }
             self.recommendCollectionView.reloadData()
         }
         
-        viewModel.outputTotalCountText.bind { [weak self] in
+        viewModel.output.totalCountText.bind { [weak self] in
             guard let self = self else {
                 return
             }
-            self.countLabel.text = self.viewModel.outputTotalCountText.value
+            self.countLabel.text = self.viewModel.output.totalCountText.value
         }
         
-        viewModel.outputSelectedSortOption.bind { [weak self] in
+        viewModel.output.selectedSortOption.bind { [weak self] in
             guard let self = self else {
                 return
             }
             
-            let selectedOption = self.viewModel.outputSelectedSortOption.value
+            let selectedOption = self.viewModel.output.selectedSortOption.value
             self.configureSortButtonUI(selected: selectedOption)
         }
         
-        viewModel.outputErrorMessage.bind { [weak self] in
+        viewModel.output.errorMessage.bind { [weak self] in
             guard let self = self else {
                 return
             }
             
-            guard let message = self.viewModel.outputErrorMessage.value else {
+            guard let message = self.viewModel.output.errorMessage.value else {
                 return
             }
             
             self.showAlert(message: message)
         }
         
-        viewModel.scrollTrigger.bind { [weak self] in
+        viewModel.output.scrollTrigger.bind { [weak self] in
             guard let self = self,
-                  self.viewModel.scrollTrigger.value != nil else {
+                  self.viewModel.output.scrollTrigger.value != nil else {
                 return
             }
             self.collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
         }
         
-        viewModel.ouputTitle.bind { [weak self] in
+        viewModel.output.title.bind { [weak self] in
             guard let self = self else {
                 return
             }
@@ -182,7 +183,7 @@ final class SearchResultViewController: UIViewController {
             break
         }
         
-        viewModel.sortOptionTrigger.value = option
+        viewModel.input.sortOptionTrigger.value = option
     }
 }
 
@@ -190,14 +191,14 @@ final class SearchResultViewController: UIViewController {
 extension SearchResultViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-            viewModel.lastPageTrigger.value = indexPath.row
-        }
+        viewModel.input.lastPageTrigger.value = indexPath.row
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == self.collectionView {
-            return viewModel.outputShoppingItems.value.count
+            return viewModel.output.shoppingItems.value.count
         } else {
-            return min(Constants.API.maxDisplayRecommendItem, viewModel.outputRecommendedItems.value.count)
+            return min(Constants.API.maxDisplayRecommendItem, viewModel.output.recommendedItems.value.count)
         }
     }
     
@@ -216,13 +217,13 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == self.collectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SearchResultCollectionViewCell.identifier, for: indexPath) as! SearchResultCollectionViewCell
-            let item = viewModel.outputShoppingItems.value[indexPath.item]
+            let item = viewModel.output.shoppingItems.value[indexPath.item]
             let viewMdoel = SearchResultCellViewModel(item: item)
             cell.configure(from: viewMdoel)
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendCollectionViewCell.identifier, for: indexPath) as! RecommendCollectionViewCell
-            let item = viewModel.outputRecommendedItems.value[indexPath.item]
+            let item = viewModel.output.recommendedItems.value[indexPath.item]
             let viewModel = RecommendCellViewModel(item: item)
             cell.configure(from: viewModel)
             return cell

@@ -8,28 +8,38 @@
 import Foundation
 
 final class SearchResultViewModel {
+    struct Input {
+        let lastPageTrigger: Observable<Int?> = Observable(nil)
+        let sortOptionTrigger: Observable<Sorting?> = Observable(nil)
+    }
     
-    let outputShoppingItems: Observable<[Item]> = Observable([])
-    let outputRecommendedItems: Observable<[Item]> = Observable([])
-    let outputTotalCountText: Observable<String?> = Observable(nil)
-    let outputSelectedSortOption: Observable<Sorting> = Observable(.sim)
-    let outputErrorMessage: Observable<String?> = Observable(nil)
-    let scrollTrigger: Observable<Void?> = Observable(nil)
-    let lastPageTrigger: Observable<Int?> = Observable(nil)
-    let ouputTitle: Observable<String?> = Observable(nil)
-    let sortOptionTrigger: Observable<Sorting?> = Observable(nil)
+    struct Output {
+        let shoppingItems: Observable<[Item]> = Observable([])
+        let recommendedItems: Observable<[Item]> = Observable([])
+        let totalCountText: Observable<String?> = Observable(nil)
+        let selectedSortOption: Observable<Sorting> = Observable(.sim)
+        let errorMessage: Observable<String?> = Observable(nil)
+        let title: Observable<String?> = Observable(nil)
+        let scrollTrigger: Observable<Void?> = Observable(nil)
+    }
+    
+    let output: Output
+    let input: Input
     
     private let keyword: String
     private var total: Int
     private var start = 1
     
     init(keyword: String, initialItems: [Item], total: Int) {
+        input = Input()
+        output = Output()
+        
         self.keyword = keyword
-        self.outputShoppingItems.value = initialItems
+        self.output.shoppingItems.value = initialItems
         self.total = total
         
-        self.outputTotalCountText.value = "\(total.formatted())개의 검색 결과"
-        self.ouputTitle.value = keyword
+        self.output.totalCountText.value = "\(total.formatted())개의 검색 결과"
+        self.output.title.value = keyword
         bindTriggers()
     }
     
@@ -38,45 +48,45 @@ final class SearchResultViewModel {
     }
     
     func changeSortOption(to newOption: Sorting) {
-        guard outputSelectedSortOption.value != newOption else {
+        guard output.selectedSortOption.value != newOption else {
             return
         }
         
-        outputSelectedSortOption.value = newOption
+        output.selectedSortOption.value = newOption
         start = 1
-        outputShoppingItems.value.removeAll()
+        output.shoppingItems.value.removeAll()
         callRequest(sort: newOption)
     }
     
     func bindTriggers() {
-        lastPageTrigger.lazyBind { [weak self] in
+        input.lastPageTrigger.lazyBind { [weak self] in
             guard let self = self else {
                 return
             }
-            guard let row = self.lastPageTrigger.value else {
+            guard let row = self.input.lastPageTrigger.value else {
                 return
             }
             
-            let shouldLoadNextPage = (row == self.outputShoppingItems.value.count - 3) && (self.outputShoppingItems.value.count < self.total)
+            let shouldLoadNextPage = (row == self.output.shoppingItems.value.count - 3) && (self.output.shoppingItems.value.count < self.total)
             
             if shouldLoadNextPage {
-                self.callRequest(sort: self.outputSelectedSortOption.value)
+                self.callRequest(sort: self.output.selectedSortOption.value)
             }
         }
         
-        sortOptionTrigger.lazyBind { [weak self] in
+        input.sortOptionTrigger.lazyBind { [weak self] in
             guard let self = self else {
                 return
             }
         
-            guard let newOption = self.sortOptionTrigger.value,
-                  self.outputSelectedSortOption.value != newOption else {
+            guard let newOption = self.input.sortOptionTrigger.value,
+                  self.output.selectedSortOption.value != newOption else {
                 return
             }
             
-            self.outputSelectedSortOption.value = newOption
+            self.output.selectedSortOption.value = newOption
             self.start = 1
-            self.outputShoppingItems.value.removeAll()
+            self.output.shoppingItems.value.removeAll()
             self.callRequest(sort: newOption)
         }
     }
@@ -89,16 +99,16 @@ final class SearchResultViewModel {
             success: { [weak self] shopItem in
                 guard let self = self else { return }
                 self.total = shopItem.total
-                self.outputShoppingItems.value.append(contentsOf: shopItem.items)
+                self.output.shoppingItems.value.append(contentsOf: shopItem.items)
                 self.start += shopItem.items.count
-                self.outputTotalCountText.value = "\(shopItem.total.formatted()) 개의 검색 결과"
+                self.output.totalCountText.value = "\(shopItem.total.formatted()) 개의 검색 결과"
                 
                 if self.start == 1 && !shopItem.items.isEmpty {
-                    self.scrollTrigger.value = ()
+                    self.output.scrollTrigger.value = ()
                 }
             },
             failure: { [weak self] error in
-                self?.outputErrorMessage.value = error.errorMessage
+                self?.output.errorMessage.value = error.errorMessage
             }
         )
     }
@@ -109,10 +119,10 @@ final class SearchResultViewModel {
         NetworkManager.shared.callShopItemRequest(
             target: target,
             success: { [weak self] shopItem in
-                self?.outputRecommendedItems.value = shopItem.items
+                self?.output.recommendedItems.value = shopItem.items
             },
             failure: { [weak self] error in
-                self?.outputErrorMessage.value = error.errorMessage
+                self?.output.errorMessage.value = error.errorMessage
             }
         )
     }
