@@ -14,16 +14,17 @@ final class NetworkManager {
 
     private init() { }
     
-    func callShopItemRequest(target: URLs, success: @escaping (ShopItem) -> Void, failure: @escaping (NetworkError) -> Void) {
-        guard let url = target.url else {
+    func callRequest<T: Decodable>(api: ShoppingRouter, type: T.Type, success: @escaping (T) -> Void, failure: @escaping (NetworkError) -> Void) {
+        let endpoint = api.endpoint
+        guard let url = endpoint else {
             return
         }
+
+        let headers = api.headers
         
-        let headers = target.headers
-        
-        AF.request(url, method: .get, headers: headers)
+        AF.request(url, method: api.method, headers: headers)
             .validate(statusCode: 200..<300)
-            .responseDecodable(of: ShopItem.self) { response in
+            .responseDecodable(of: T.self) { response in
                 switch response.result {
                 case .success(let value):
                     success(value)
