@@ -92,18 +92,17 @@ final class SearchResultViewModel {
     }
 
     private func callRequest(sort: Sorting) {
-        let target = URLs.shopping(for: keyword, display: Constants.API.paginationStandards, sort: sort, start: start)
-        
-        NetworkManager.shared.callShopItemRequest(
-            target: target,
-            success: { [weak self] shopItem in
+        NetworkManager.shared.callRequest(
+            api: .keyword(for: keyword, display: Constants.API.paginationStandards, sort: sort, start: start),
+            type: ShopItem.self,
+            success: { [weak self] value in
                 guard let self = self else { return }
-                self.total = shopItem.total
-                self.output.shoppingItems.value.append(contentsOf: shopItem.items)
-                self.start += shopItem.items.count
-                self.output.totalCountText.value = "\(shopItem.total.formatted()) 개의 검색 결과"
+                self.total = value.total
+                self.output.shoppingItems.value.append(contentsOf: value.items)
+                self.start += value.items.count
+                self.output.totalCountText.value = "\(value.total.formatted()) 개의 검색 결과"
                 
-                if self.start == 1 && !shopItem.items.isEmpty {
+                if self.start == 1 && !value.items.isEmpty {
                     self.output.scrollTrigger.value = ()
                 }
             },
@@ -114,12 +113,11 @@ final class SearchResultViewModel {
     }
     
     private func callRecommendRequest() {
-        let target = URLs.shopping(for: Constants.Title.recommendKeyword, display: Constants.API.maxDisplayRecommendItem)
-        
-        NetworkManager.shared.callShopItemRequest(
-            target: target,
-            success: { [weak self] shopItem in
-                self?.output.recommendedItems.value = shopItem.items
+        NetworkManager.shared.callRequest(
+            api: .keyword(for: Constants.Title.recommendKeyword, display: Constants.API.maxDisplayRecommendItem),
+            type: ShopItem.self,
+            success: { [weak self] value in
+                self?.output.recommendedItems.value = value.items
             },
             failure: { [weak self] error in
                 self?.output.errorMessage.value = error.errorMessage

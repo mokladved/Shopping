@@ -47,16 +47,15 @@ final class HomeViewModel {
             return
         }
         
-        let target = URLs.shopping(for: text, display: Constants.API.paginationStandards)
-        
-        NetworkManager.shared.callShopItemRequest(
-            target: target,
-            success: { [weak self] shopItem in
+        NetworkManager.shared.callRequest(
+            api: .keyword(for: text, display: Constants.API.paginationStandards),
+            type: ShopItem.self,
+            success: { [weak self] value in
                 guard let self = self else { return }
                 
-                self.output.shoppingItems.value = shopItem.items
+                self.output.shoppingItems.value = value.items
                 self.output.keyword.value = text
-                self.output.total.value = shopItem.total
+                self.output.total.value = value.total
                 
                 self.output.pushTrigger.value = ()
                 
